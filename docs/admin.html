@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow">
+    <title>Демо · Админка · hCatering</title>
+    <link rel="stylesheet" href="./style.css" />
+    <script type="module" src="./admin.js"></script>
+  </head>
+  <body>
+    <div id="admin" v-cloak>
+      <aside class="demo-notice">Демоверсия · Заявки и изменения сохраняются только в этом браузере. <a href="./">Открыть витрину ↗</a></aside>
+      <header>
+        <div class="wrap nav">
+          <a class="logo" href="./">h<span>Catering</span><i>✳</i></a
+          ><a href="./">Открыть меню ↗</a
+          >
+        </div>
+      </header>
+      <main class="wrap manage">
+        <p v-if="error" role="alert" class="error">{{error}}</p>
+        <p v-if="notice" role="status">{{notice}}</p>
+        <p v-if="loading">Загрузка…</p>
+        <template v-else
+          ><h1>Рабочий стол</h1>
+          <div class="filters">
+            <button
+              v-for="t in tabs"
+              :class="{active:tab===t}"
+              @click="tab=t;notice=''"
+            >
+              {{t}} <span v-if="t==='Заявки'">({{orders.length}})</span
+              ><span v-if="t==='Обращения'">({{inquiries.length}})</span>
+            </button>
+          </div>
+          <div class="bar">
+            <h2>{{tab}}</h2>
+            <button v-if="tab==='Блюда'" class="action" @click="editDish()">
+              + Блюдо</button
+            ><button
+              v-else-if="tab==='Категории'"
+              class="action"
+              @click="editCategory()"
+            >
+              + Категория</button
+            ><button v-else @click="refresh">Обновить</button>
+          </div>
+          <section v-if="tab==='Блюда'">
+            <input
+              class="search"
+              v-model="query"
+              placeholder="Поиск по названию"
+              aria-label="Найти блюдо"
+            />
+            <div v-for="d in filtered" class="admin-row" :key="d.id">
+              <img v-if="d.image" :src="d.image" alt="" />
+              <div class="grow">
+                <b>{{d.name}}</b
+                ><small
+                  >{{catName(d.category)}} · {{d.portion}} · {{money(d.price)}}
+                  · {{d.visible?'В меню':'Скрыто'}}</small
+                >
+              </div>
+              <button @click="editDish(d)">Изменить</button>
+            </div>
+            <p v-if="!filtered.length">Блюд не найдено.</p>
+          </section>
+          <section v-else-if="tab==='Категории'">
+            <div class="admin-row" v-for="c in categories" :key="c.id">
+              <b class="grow">{{c.name}}</b
+              ><small
+                >Блюд: {{dishes.filter(d=>d.category===c.id).length}}</small
+              ><button @click="editCategory(c)">Изменить</button>
+            </div>
+          </section>
+          <section v-else-if="tab==='Обращения'">
+            <p v-if="!inquiries.length">Здесь появятся обращения с сайта.</p>
+            <details v-for="item in inquiries" :key="item.id">
+              <summary>
+                №{{item.id}} · {{item.name}} · {{item.plan ? item.plan.format :
+                'Обратный звонок'}}
+                <small
+                  >{{new Date(item.created).toLocaleString('ru-RU')}}</small
+                >
+              </summary>
+              <p><a :href="'tel:'+item.phone">{{item.phone}}</a></p>
+              <template v-if="item.plan">
+                <p>
+                  Гостей: {{item.plan.guests}}<span v-if="item.plan.date">
+                    · {{new
+                    Date(item.plan.date+'T12:00:00').toLocaleDateString('ru-RU')}}</span
+                  >
+                </p>
+                <p>{{item.plan.venue}}</p>
+                <p v-if="item.plan.services.length">
+                  {{item.plan.services.join(' · ')}}
+                </p>
+              </template>
+              <p v-if="item.note">{{item.note}}</p>
+            </details>
+          </section>
+          <section v-else>
+            <p v-if="!orders.length">Заявки покупателей появятся здесь.</p>
+            <details v-for="o in orders" :key="o.id">
+              <summary>
+                №{{o.id}} · {{o.name}} · {{money(o.total)}}
+                <small>{{new Date(o.created).toLocaleString('ru-RU')}}</small>
+              </summary>
+              <p><a :href="'tel:'+o.phone">{{o.phone}}</a></p>
+              <p v-if="o.note">{{o.note}}</p>
+              <div class="line" v-for="i in o.items">
+                <span>{{i.name}} · {{i.portion}} × {{i.qty}}</span
+                ><b>{{money(i.price*i.qty)}}</b>
+              </div>
+            </details>
+          </section></template
+        >
+      </main>
+      <dialog ref="editor">
+        <form class="sheet" @submit.prevent="save">
+          <button
+            type="button"
+            class="close"
+            @click="editor.close()"
+            aria-label="Закрыть"
+          >
+            ×
+          </button>
+          <h2>{{kind==='dishes'?'Карточка блюда':'Категория'}}</h2>
+          <label
+            >Название<input
+              v-model.trim="draft.name"
+              required
+              maxlength="120" /></label
+          ><template v-if="kind==='dishes'"
+            ><label
+              >Категория<select required v-model.number="draft.category">
+                <option disabled value="">Выберите категорию</option>
+                <option v-for="c in categories" :value="c.id">
+                  {{c.name}}
+                </option>
+              </select></label
+            ><label
+              >Краткое описание<textarea
+                v-model="draft.description"
+                maxlength="600"
+              ></textarea>
+            </label>
+            <div class="pair">
+              <label
+                >Цена за набор, ₽<input
+                  required
+                  type="number"
+                  min="1"
+                  step="1"
+                  max="1000000"
+                  v-model.number="draft.price" /></label
+              ><label
+                >Размер набора<input
+                  required
+                  maxlength="60"
+                  placeholder="12 шт."
+                  v-model="draft.portion"
+              /></label>
+            </div>
+            <div class="pair">
+              <label
+                >Вес набора, г<input
+                  type="number"
+                  min="1"
+                  max="1000000"
+                  step="1"
+                  v-model.number="draft.weightGrams"
+              /></label>
+              <label
+                >Ккал на 100 г<input
+                  type="number"
+                  min="0"
+                  max="1000"
+                  step="1"
+                  v-model.number="draft.kcalPer100g"
+              /></label>
+            </div>
+            <label
+              >Состав<textarea
+                v-model.trim="draft.ingredients"
+                maxlength="1500"
+              ></textarea>
+            </label>
+            <label
+              >Аллергены<textarea
+                v-model.trim="draft.allergens"
+                maxlength="600"
+                placeholder="Например, молоко, яйца, пшеница"
+              ></textarea>
+            </label>
+            <label
+              >Фотография <small>JPG, PNG или WebP до 3 МБ</small
+              ><input
+                type="file"
+                ref="file"
+                accept="image/jpeg,image/png,image/webp"
+                @change="upload"
+            /></label>
+            <div v-if="draft.image" class="thumb">
+              <img :src="draft.image" alt="Фото блюда" /><button
+                type="button"
+                @click="draft.image=''"
+              >
+                Снять фото
+              </button>
+            </div>
+            <label class="check"
+              ><input type="checkbox" v-model="draft.visible" /> Показывать в
+              меню</label
+            ></template
+          >
+          <p class="error" v-if="modalError" role="alert">{{modalError}}</p>
+          <div class="bar">
+            <button class="action" :disabled="busy">Сохранить</button
+            ><button
+              v-if="draft.id"
+              type="button"
+              :disabled="busy"
+              @click="remove"
+            >
+              Удалить
+            </button>
+          </div>
+        </form>
+      </dialog>
+    </div>
+  </body>
+</html>
