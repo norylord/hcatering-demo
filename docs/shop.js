@@ -13,7 +13,7 @@ createApp({
   setup() {
     const categories = ref([]),
       dishes = ref([]),
-      category = ref(0),
+      favoritesDialog = ref(null),
       loading = ref(true),
       error = ref(''),
       cartError = ref('')
@@ -51,7 +51,10 @@ createApp({
 
     let key = crypto.randomUUID()
     try {
-      const stored = JSON.parse(localStorage.getItem(new URL('./cart', import.meta.url).pathname) || '{}')
+      const stored = JSON.parse(
+        localStorage.getItem(new URL('./cart', import.meta.url).pathname) ||
+          '{}',
+      )
       for (const [id, qty] of Object.entries(stored))
         if (/^\d+$/.test(id) && Number.isInteger(qty) && qty > 0 && qty <= 99)
           cart.value[id] = qty
@@ -61,7 +64,10 @@ createApp({
       () => {
         key = crypto.randomUUID()
         try {
-          localStorage.setItem(new URL('./cart', import.meta.url).pathname, JSON.stringify(cart.value))
+          localStorage.setItem(
+            new URL('./cart', import.meta.url).pathname,
+            JSON.stringify(cart.value),
+          )
         } catch {}
       },
       { deep: true },
@@ -75,11 +81,6 @@ createApp({
         categories.value = data.categories.filter((c) =>
           data.dishes.some((d) => d.category === c.id),
         )
-        if (
-          category.value !== 'favorites' &&
-          !categories.value.some((c) => c.id === category.value)
-        )
-          category.value = 0
         for (const id of Object.keys(cart.value))
           if (!data.dishes.some((d) => String(d.id) === id))
             delete cart.value[id]
@@ -90,12 +91,18 @@ createApp({
       }
     }
     onMounted(load)
-    const filtered = computed(() => {
-      if (category.value === 'favorites') return favoriteDishes.value
-      return dishes.value.filter(
-        (d) => !category.value || d.category === category.value,
-      )
-    })
+    const sections = computed(() =>
+      categories.value.map((category) => {
+        const items = dishes.value.filter(
+          (dish) => dish.category === category.id,
+        )
+        return {
+          ...category,
+          items,
+          cover: items.find((dish) => dish.image)?.image,
+        }
+      }),
+    )
     const lines = computed(() =>
       dishes.value
         .filter((d) => cart.value[d.id])
@@ -143,7 +150,11 @@ createApp({
         })
         receipt.value = result.id
         cart.value = {}
-        form.value = { name: 'Демо-гость', phone: '+7 (000) 000-00-00', note: '' }
+        form.value = {
+          name: 'Демо-гость',
+          phone: '+7 (000) 000-00-00',
+          note: '',
+        }
       } catch (e) {
         cartError.value = e.message
         if (e.status === 409) await load()
@@ -155,7 +166,7 @@ createApp({
       ...useInquiry(),
       categories,
       dishes,
-      category,
+      favoritesDialog,
       loading,
       error,
       cartError,
@@ -167,7 +178,7 @@ createApp({
       favorites,
       favoriteDishes,
       toggleFavorite,
-      filtered,
+      sections,
       lines,
       count,
       total,
