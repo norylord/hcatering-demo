@@ -11,11 +11,11 @@
   </head>
   <body>
     <div id="app" v-cloak>
-      <aside class="demo-notice">Демоверсия · Заявки и изменения сохраняются только в этом браузере. <a href="./admin.html">Демоадминка ↗</a></aside>
+      <aside class="demo-notice">Демоверсия · Заявки и изменения сохраняются только в этом браузере. <a href="./admin.html">Демоадминка</a></aside>
       <header>
         <div class="wrap nav">
           <a href="./" class="logo" aria-label="hCatering, главная"
-            >h<span>Catering</span><i>✳</i></a
+            >h<span>Catering</span></a
           >
           <nav>
             <a href="#menu">Меню</a><a href="#event-constructor">Конструктор</a
@@ -33,15 +33,15 @@
       <main class="wrap">
         <section class="hero">
           <div class="hero-copy">
-            <div class="eyebrow"><i></i> КЕЙТЕРИНГ В ВОЛГОГРАДЕ</div>
-            <h1>Соберите всех<br /><em>за столом.</em></h1>
+            <div class="eyebrow">КЕЙТЕРИНГ В ВОЛГОГРАДЕ</div>
+            <h1>Соберите всех<br /><em>за столом</em></h1>
             <p>
               От брускетт до десертов — соберите меню<br class="desktop" />
               для встречи с близкими или большого события.
             </p>
             <div class="hero-links">
-              <a class="action" href="#menu">Выбрать блюда <span>↘</span></a
-              ><a href="#event-constructor">Собрать событие ↘</a>
+              <a class="action" href="#menu">Выбрать блюда</a
+              ><a href="#event-constructor">Собрать событие</a>
             </div>
           </div>
           <div class="hero-photo">
@@ -49,14 +49,13 @@
               src="./images/table.jpg"
               alt="Фуршетный стол с брускеттами, круассанами и канапе"
             /><span class="seal" aria-hidden="true"
-              ><small>hCATERING</small><strong>✳</strong
-              ><small>ВОЛГОГРАД</small></span
+              ><small>hCATERING</small><small>ВОЛГОГРАД</small></span
             >
           </div>
         </section>
         <section id="menu">
           <div class="section-title">
-            <h2>Наше меню<span>.</span></h2>
+            <h2>Наше меню</h2>
             <small>Демонстрационный каталог</small>
           </div>
           <div class="filters" role="group" aria-label="Фильтры меню">
@@ -175,8 +174,8 @@
           aria-labelledby="event-title"
         >
           <div class="block-intro">
-            <div class="eyebrow"><i></i> EVENT-КОНСТРУКТОР</div>
-            <h2 id="event-title">Ваше<br /><em>мероприятие.</em></h2>
+            <div class="eyebrow">EVENT-КОНСТРУКТОР</div>
+            <h2 id="event-title">Ваше<br /><em>мероприятие</em></h2>
             <p>
               Выберите формат встречи и укажите, что понадобится гостям.
               Менеджер подготовит предложение по вашим пожеланиям.
@@ -236,7 +235,7 @@
               </div>
             </fieldset>
             <button class="action" :disabled="sending">
-              Перейти к заявке <span>↓</span>
+              Перейти к заявке
             </button>
           </form>
         </section>
@@ -305,7 +304,7 @@
               {{confirmation}}
             </p>
             <button class="action" :disabled="sending">
-              {{sending ? 'Отправляем…' : 'Сохранить тестовое обращение'}} <span>→</span>
+              {{sending ? 'Отправляем…' : 'Сохранить тестовое обращение'}}
             </button>
           </form>
         </section>
@@ -313,10 +312,10 @@
       <footer>
         <div class="wrap foot">
           <div>
-            <div class="logo">h<span>Catering</span><i>✳</i></div>
+            <div class="logo">h<span>Catering</span></div>
           </div>
-          <a href="#menu">Вернуться к меню ↑</a>
-          <a href="./admin.html">Админка ↗</a>
+          <a href="#menu">Вернуться к меню</a>
+          <a href="./admin.html">Админка</a>
         </div>
       </footer>
       <dialog ref="dialog" @click="backdrop" @close="receipt=null">
@@ -382,7 +381,7 @@
                     v-model="form.note"
                   ></textarea></label
                 ><button class="action" :disabled="busy">
-                  {{busy?'Отправляем…':'Создать тестовую заявку'}} <span>→</span>
+                  {{busy?'Отправляем…':'Создать тестовую заявку'}}
                 </button>
               </form></template
             >
@@ -419,7 +418,7 @@
           </div>
           <div class="detail-content">
             <div class="eyebrow">
-              <i></i>{{categories.find(c=>c.id===selectedDish.category)?.name}}
+              {{categories.find(c=>c.id===selectedDish.category)?.name}}
             </div>
             <h2 id="detail-title">{{selectedDish.name}}</h2>
             <p v-if="selectedDish.description" class="detail-description">
