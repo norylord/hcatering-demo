@@ -260,8 +260,6 @@ small {
 }
 .buy {
   margin-top: 15px;
-  padding-top: 12px;
-  border-top: 1px solid var(--line);
 }
 .buy strong {
   font-size: 19px;
@@ -564,6 +562,20 @@ details p {
   color: #66594d;
   line-height: 1.5;
 }
+.event-form select {
+  appearance: none;
+  min-width: 0;
+  padding-right: 40px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='m3 5.5 5 5 5-5' fill='none' stroke='%2335242b' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+@media (forced-colors: active) {
+  .event-form select {
+    appearance: auto;
+    background-image: none;
+  }
+}
 .event-form fieldset {
   margin: 0;
   padding: 0;
@@ -783,13 +795,7 @@ details p {
 .nutrition {
   display: flex;
   gap: 25px;
-  padding: 15px 0;
   margin: 19px 0;
-  border-block: 1px solid var(--line);
-}
-.nutrition > div + div {
-  border-left: 1px solid var(--line);
-  padding-left: 25px;
 }
 .nutrition dt,
 .detail-buy small {
@@ -829,8 +835,6 @@ details p {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  border-top: 1px solid var(--line);
-  padding-top: 16px;
   margin-top: 16px;
 }
 .detail-buy strong,
@@ -1045,15 +1049,7 @@ details p {
   transform: scale(1.06);
 }
 .category-heading {
-  display: flex;
-  align-items: baseline;
-  gap: 18px;
   margin: 40px 0 16px;
-}
-.category-heading::after {
-  content: '';
-  flex: 1;
-  border-top: 1px solid var(--line);
 }
 .category-heading h3 {
   font-size: clamp(30px, 3.4vw, 48px);
@@ -1229,7 +1225,6 @@ footer .logo {
     font-size: 15px;
   }
   .category-heading {
-    gap: 9px;
     margin-top: 26px;
   }
   #menu,
