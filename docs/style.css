@@ -189,9 +189,6 @@ h3 {
 small {
   color: #72675d;
 }
-.section-title small {
-  font-size: 12px;
-}
 .filters {
   display: flex;
   gap: 8px;
@@ -497,10 +494,6 @@ details p {
   .section-title {
     margin: 26px 0 12px;
   }
-  .section-title small {
-    max-width: 100px;
-    text-align: right;
-  }
   .grid {
     grid-template-columns: 1fr;
     gap: 28px;
@@ -620,18 +613,10 @@ details p {
 .contact-block .action {
   justify-self: start;
 }
-.contact-block address,
 .brief {
   display: grid;
   gap: 6px;
   font-style: normal;
-}
-.contact-block address {
-  margin-top: 22px;
-  justify-items: start;
-}
-.contact-block address a:first-child {
-  font-size: 22px;
 }
 .brief,
 .receipt {
@@ -901,22 +886,6 @@ details p {
   }
 }
 
-.demo-notice {
-  padding: 8px 5%;
-  text-align: center;
-  background: #f2e7e9;
-  color: var(--ink);
-  font-size: 13px;
-  line-height: 1.45;
-}
-.demo-notice a {
-  margin-inline-start: 0.6em;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-input[readonly] {
-  background: #f1eee5;
-}
 
 .store-header {
   position: sticky;
@@ -1089,13 +1058,6 @@ input[readonly] {
 .category-heading h3 {
   font-size: clamp(30px, 3.4vw, 48px);
   letter-spacing: -0.055em;
-}
-.category-heading a {
-  order: 1;
-  font-size: 12px;
-  color: #704451;
-  text-decoration: underline;
-  text-underline-offset: 3px;
 }
 .catalog-section .grid {
   margin: 0;

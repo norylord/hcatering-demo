@@ -5,16 +5,12 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta name="theme-color" content="#fbf7ed" />
     <meta name="robots" content="noindex,nofollow" />
-    <title>Демо · hCatering — меню для вашего события</title>
+    <title>hCatering — меню для вашего события</title>
     <link rel="stylesheet" href="./style.css" />
     <script type="module" src="./shop.js"></script>
   </head>
   <body>
     <div id="app" v-cloak>
-      <aside class="demo-notice">
-        Демоверсия · Заявки и изменения сохраняются только в этом браузере.
-        <a href="./admin.html">Демоадминка</a>
-      </aside>
       <header class="store-header">
         <div class="wrap nav">
           <a href="./" class="logo" aria-label="hCatering, главная"
@@ -72,7 +68,6 @@
         <section id="menu" aria-labelledby="menu-heading">
           <div class="section-title">
             <h2 id="menu-heading">Меню боксов</h2>
-            <small>Демонстрационный каталог</small>
           </div>
           <nav
             class="category-index"
@@ -105,7 +100,6 @@
           >
             <div class="category-heading">
               <h3 :id="'heading-'+group.id">{{group.name}}</h3>
-              <a href="#menu">К разделам меню</a>
             </div>
             <div class="grid" :class="{'pair-grid':group.items.length===2}">
               <article
@@ -252,6 +246,13 @@
               </div>
             </fieldset>
             <button class="action" :disabled="sending">Перейти к заявке</button>
+            <div v-if="attached" class="brief">
+              <strong>В заявке: {{attached.format}} · Гостей: {{attached.guests}}</strong>
+              <span>{{attached.venue}}</span>
+              <span v-if="attached.date">{{new Date(attached.date+'T12:00:00').toLocaleDateString('ru-RU')}}</span>
+              <span v-if="attached.services.length">{{attached.services.join(' · ')}}</span>
+              <button type="button" :disabled="sending" @click="attached=null">Убрать параметры из заявки</button>
+            </div>
           </form>
         </section>
         <section class="menu-guide" aria-labelledby="guide-heading">
@@ -276,8 +277,7 @@
             <details>
               <summary>Что происходит после оформления?</summary>
               <p>
-                После оформления заявка появится во вкладке «Заявки» демоадминки
-                этого браузера.
+                Заявка с выбранными блюдами появится в разделе «Заявки» админки этого браузера.
               </p>
             </details>
           </div>
@@ -289,67 +289,33 @@
         >
           <div class="block-intro">
             <h2 id="contact-title">Обсудим<br /><em>ваше событие?</em></h2>
-            <p>
-              Попробуйте оформить тестовое обращение. Оно появится в демоадминке
-              этого браузера.
-            </p>
           </div>
           <form @submit.prevent="sendInquiry">
-            <div v-if="attached" class="brief">
-              <strong>{{attached.format}} · Гостей: {{attached.guests}}</strong>
-              <span v-if="attached.date"
-                >{{new
-                Date(attached.date+'T12:00:00').toLocaleDateString('ru-RU')}}</span
-              >
-              <span>{{attached.venue}}</span
-              ><span v-if="attached.services.length"
-                >{{attached.services.join(' · ')}}</span
-              >
-              <div>
-                <a href="#event-constructor">Изменить параметры</a>
-                <button
-                  type="button"
-                  :disabled="sending"
-                  @click="attached=null"
-                >
-                  Убрать из заявки
-                </button>
-              </div>
-            </div>
             <div class="pair">
               <label
-                >Тестовое имя<input
-                  readonly
+                >Ваше имя<input
                   id="inquiry-name"
                   required
                   maxlength="100"
-                  autocomplete="off"
+                  autocomplete="name"
                   v-model.trim="contact.name"
               /></label>
               <label
-                >Тестовый телефон<input
-                  readonly
+                >Телефон<input
                   type="tel"
                   required
                   maxlength="32"
-                  autocomplete="off"
+                  autocomplete="tel"
                   placeholder="+7 (___) ___-__-__"
                   v-model.trim="contact.phone"
               /></label>
             </div>
-            <label
-              >Комментарий<textarea
-                maxlength="1000"
-                v-model.trim="contact.note"
-                placeholder="Что нам стоит учесть?"
-              ></textarea>
-            </label>
             <p v-if="failure" role="alert" class="error">{{failure}}</p>
             <p v-if="confirmation" role="status" class="receipt">
               {{confirmation}}
             </p>
             <button class="action" :disabled="sending">
-              {{sending ? 'Отправляем…' : 'Сохранить тестовое обращение'}}
+              {{sending ? 'Отправляем…' : 'Отправить'}}
             </button>
           </form>
         </section>
@@ -409,8 +375,7 @@
             ><div class="eyebrow">hCatering</div>
             <h2>Заявка №{{receipt}} принята</h2>
             <p>
-              Заказ сохранён в этом браузере. Его можно посмотреть в
-              демоадминке.
+              Заказ сохранён в этом браузере.
             </p>
             <button class="action" @click="$refs.dialog.close()">
               Вернуться в меню
@@ -443,19 +408,17 @@
               <div class="total"><b>Итого</b><b>{{money(total)}}</b></div>
               <form @submit.prevent="submit">
                 <label
-                  >Тестовое имя<input
-                    readonly
+                  >Ваше имя<input
                     required
                     maxlength="100"
-                    autocomplete="off"
+                    autocomplete="name"
                     v-model.trim="form.name" /></label
                 ><label
-                  >Тестовый телефон<input
-                    readonly
+                  >Телефон<input
                     required
                     type="tel"
                     maxlength="32"
-                    autocomplete="off"
+                    autocomplete="tel"
                     placeholder="+7 (___) ___-__-__"
                     v-model.trim="form.phone" /></label
                 ><label
@@ -465,7 +428,7 @@
                     v-model="form.note"
                   ></textarea></label
                 ><button class="action" :disabled="busy">
-                  {{busy?'Отправляем…':'Создать тестовую заявку'}}
+                  {{busy?'Отправляем…':'Оставить заявку'}}
                 </button>
               </form></template
             >
@@ -534,7 +497,7 @@
               <p v-else>Информацию об аллергенах уточните у менеджера.</p>
             </div>
             <small class="recipe-note"
-              >Демонстрационное меню. Точный вес, пищевую ценность и аллергены
+              >Точный вес, пищевую ценность и аллергены
               уточните при заказе.</small
             >
             <div class="detail-buy">

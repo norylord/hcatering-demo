@@ -21,7 +21,7 @@ createApp({
       dialog = ref(),
       receipt = ref(null),
       busy = ref(false),
-      form = ref({ name: 'Демо-гость', phone: '+7 (000) 000-00-00', note: '' })
+      form = ref({ name: '', phone: '', note: '' })
     const favoriteKey = new URL('./favorites', import.meta.url).pathname
     function readFavorites() {
       try {
@@ -151,8 +151,8 @@ createApp({
         receipt.value = result.id
         cart.value = {}
         form.value = {
-          name: 'Демо-гость',
-          phone: '+7 (000) 000-00-00',
+          name: '',
+          phone: '',
           note: '',
         }
       } catch (e) {

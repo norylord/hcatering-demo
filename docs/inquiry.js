@@ -13,7 +13,7 @@ const emptyPlan = () => ({
 export function useInquiry() {
   const plan = ref(emptyPlan())
   const attached = ref(null)
-  const contact = ref({ name: 'Демо-гость', phone: '+7 (000) 000-00-00', note: '' })
+  const contact = ref({ name: '', phone: '' })
   const sending = ref(false)
   const failure = ref('')
   const confirmation = ref('')
@@ -35,13 +35,14 @@ export function useInquiry() {
       const result = await api('inquiries', 'POST', {
         key,
         ...contact.value,
+        note: '',
         plan: attached.value,
       })
       confirmation.value =
         'Обращение №' +
         result.id +
-        ' сохранено в демоадминке этого браузера.'
-      contact.value = { name: 'Демо-гость', phone: '+7 (000) 000-00-00', note: '' }
+        ' сохранено в этом браузере.'
+      contact.value = { name: '', phone: '' }
       if (attached.value) plan.value = emptyPlan()
       attached.value = null
       key = crypto.randomUUID()

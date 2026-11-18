@@ -5,7 +5,7 @@ let initialCatalog
 async function catalog() {
   if (!initialCatalog) {
     const response = await fetch(new URL('./menu.json', import.meta.url))
-    if (!response.ok) throw new Error('Не удалось загрузить демонстрационное меню.')
+    if (!response.ok) throw new Error('Не удалось загрузить меню.')
     initialCatalog = await response.json()
   }
   return structuredClone(initialCatalog)
@@ -19,9 +19,15 @@ function recordRequest(state, path, data) {
   const list = state[path]
   const duplicate = list.find(row => row.key === data.key)
   if (duplicate) return { id: duplicate.id }
+  const name = data.name?.trim()
+  const phone = data.phone?.trim()
+  if (!name || name.length > 100) reject('Укажите имя.')
+  if (!phone || phone.length > 32 || !/^[+\d\s()-]+$/.test(phone) || !/^\d{7,15}$/.test(phone.replace(/\D/g, ''))) {
+    reject('Проверьте номер телефона.')
+  }
   const record = {
     id: ++state.sequence[path], key: data.key, created: new Date().toISOString(),
-    name: 'Демо-гость', phone: '+7 (000) 000-00-00', note: data.note || '',
+    name, phone, note: data.note || '',
   }
   if (path === 'orders') {
     if (!data.items?.length) reject('Корзина пуста.')
